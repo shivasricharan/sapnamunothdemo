@@ -7,7 +7,6 @@ import {
   Sparkles,
   Leaf,
   MessageCircle,
-  Instagram,
   ShoppingBag,
   Clock,
   IndianRupee,
@@ -346,7 +345,7 @@ export default function Home() {
 
             <div className="phone-frame">
               <div className="phone-top">
-                <Instagram size={18} />
+                <Camera size={18} />
                 <span>Instagram DM</span>
               </div>
 
