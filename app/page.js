@@ -7,6 +7,7 @@ import {
   Sparkles,
   Leaf,
   MessageCircle,
+  Camera,
   ShoppingBag,
   Clock,
   IndianRupee,
