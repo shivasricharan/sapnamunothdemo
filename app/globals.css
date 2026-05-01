@@ -726,3 +726,47 @@ body {
 .owner-card .lead-card {
   margin-top: 16px;
 }
+/* Desktop/tablet fix: prevent floating hero tags from overlapping phone card */
+@media (min-width: 641px) {
+  .hero-visual {
+    isolation: isolate;
+    padding: 48px 72px;
+  }
+
+  .phone-frame {
+    position: relative;
+    z-index: 5;
+  }
+
+  .fabric-card {
+    z-index: 2;
+    white-space: nowrap;
+  }
+
+  .top-card {
+    top: 10px;
+    left: -42px;
+  }
+
+  .bottom-card {
+    bottom: 22px;
+    right: -42px;
+  }
+}
+
+/* Tablet-specific spacing */
+@media (min-width: 641px) and (max-width: 1100px) {
+  .hero-visual {
+    padding: 56px 56px;
+  }
+
+  .top-card {
+    top: 8px;
+    left: 0;
+  }
+
+  .bottom-card {
+    bottom: 16px;
+    right: 0;
+  }
+}
