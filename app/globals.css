@@ -669,4 +669,60 @@ body {
     border-radius: 26px;
     padding: 20px;
   }
+}.customer-summary {
+  border: 1px solid var(--sapna-line);
+  background: rgba(0, 0, 0, 0.12);
+  border-radius: 24px;
+  padding: 18px;
+  display: grid;
+  gap: 12px;
+  margin: 22px 0;
+  text-align: left;
+}
+
+.customer-summary div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+}
+
+.customer-summary span {
+  color: var(--sapna-muted);
+  font-size: 13px;
+}
+
+.customer-summary strong {
+  text-align: right;
+}
+
+.tiny-note {
+  color: var(--sapna-muted);
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 12px auto 4px;
+  max-width: 520px;
+}
+
+.side-note-card {
+  margin-top: 24px;
+  border: 1px solid var(--sapna-line);
+  background: var(--sapna-card);
+  border-radius: 26px;
+  padding: 20px;
+  backdrop-filter: blur(18px);
+}
+
+.side-note-card h3 {
+  margin: 12px 0 8px;
+  font-size: 20px;
+}
+
+.side-note-card p {
+  font-size: 15px;
+  margin: 0;
+}
+
+.owner-card .lead-card {
+  margin-top: 16px;
 }

@@ -16,12 +16,16 @@ import {
   Send,
   Heart,
   Palette,
+  Shirt,
+  ClipboardList,
+  Filter,
+  Store,
 } from "lucide-react";
 
 const initialForm = {
   name: "",
   whatsapp: "",
-  source: "Instagram DM",
+  source: "Website",
   interest: "",
   occasion: "",
   fabric: "",
@@ -35,6 +39,15 @@ const initialForm = {
 };
 
 const options = {
+  source: [
+    "Website",
+    "Instagram",
+    "WhatsApp Channel",
+    "Meta Ad",
+    "Exhibition Stall",
+    "Friend / Referral",
+    "Store Visit",
+  ],
   interest: [
     "Festive wear",
     "Block print dress",
@@ -137,22 +150,24 @@ function calculateIntent(form) {
 }
 
 function buildWhatsappMessage(form, result) {
-  return `Hi Sapna Munoth team, I shared my style preference through Vouch.
+  return `Hi Sapna Munoth team, I just shared my style preferences.
 
 Name: ${form.name}
-Interest: ${form.interest}
+WhatsApp: ${form.whatsapp}
+I found you through: ${form.source}
+
+I am looking for: ${form.interest}
 Occasion: ${form.occasion}
-Fabric preference: ${form.fabric}
+Fabric / style preference: ${form.fabric}
 Size: ${form.size}
 Budget: ${form.budget}
 Timeline: ${form.timeline}
-Readiness: ${form.readiness}
+Buying readiness: ${form.readiness}
 Help needed: ${form.helpType}
 
-Intent: ${result.level} (${result.score}/100)
-Suggested action: ${result.action}
+Note: ${form.notes || "No extra note"}
 
-Notes: ${form.notes || "No extra notes"}`;
+Please send me curated options based on the above.`;
 }
 
 export default function Home() {
@@ -181,7 +196,7 @@ export default function Home() {
     e.preventDefault();
 
     if (!form.name || !form.whatsapp || !form.interest || !form.consent) {
-      alert("Please fill name, WhatsApp number, interest and consent.");
+      alert("Please fill name, WhatsApp number, what you are looking for, and consent.");
       return;
     }
 
@@ -222,9 +237,12 @@ export default function Home() {
   }
 
   if (submitted) {
-    const message = encodeURIComponent(submitted.whatsappMessage);
-    const cleanNumber = submitted.whatsapp.replace(/\D/g, "");
-    const whatsappLink = `https://wa.me/91${cleanNumber.slice(-10)}?text=${message}`;
+    const sapnaNumber =
+      process.env.NEXT_PUBLIC_SAPNA_WHATSAPP_NUMBER || "91XXXXXXXXXX";
+
+    const whatsappLink = `https://wa.me/${sapnaNumber}?text=${encodeURIComponent(
+      submitted.whatsappMessage
+    )}`;
 
     return (
       <main className="sapna-page">
@@ -236,35 +254,51 @@ export default function Home() {
               <CheckCircle2 size={34} />
             </div>
 
-            <p className="eyebrow">Vouch Style Finder</p>
+            <p className="eyebrow">Sapna Munoth Style Finder</p>
 
-            <h1>Your style preference is captured.</h1>
+            <h1>Your style preferences have been shared.</h1>
 
             <p className="success-copy">
-              Sapna Munoth’s team can now see what this buyer wants, how urgent
-              the purchase is, and what action should happen next.
+              Thank you, {submitted.name}. The Sapna Munoth team now has your
+              size, occasion, budget, timeline and style preference, so they can
+              send you more relevant options instead of a random catalogue.
             </p>
 
-            <div className="intent-panel">
+            <div className="customer-summary">
               <div>
-                <span>Intent Level</span>
-                <strong>{submitted.intentLevel}</strong>
+                <span>Looking for</span>
+                <strong>{submitted.interest}</strong>
               </div>
 
               <div>
-                <span>Intent Score</span>
-                <strong>{submitted.intentScore}/100</strong>
+                <span>Occasion</span>
+                <strong>{submitted.occasion || "Not specified"}</strong>
               </div>
 
               <div>
-                <span>Suggested Action</span>
-                <strong>{submitted.suggestedAction}</strong>
+                <span>Size</span>
+                <strong>{submitted.size || "Not specified"}</strong>
+              </div>
+
+              <div>
+                <span>Budget</span>
+                <strong>{submitted.budget || "Not specified"}</strong>
+              </div>
+
+              <div>
+                <span>Timeline</span>
+                <strong>{submitted.timeline || "Not specified"}</strong>
               </div>
             </div>
 
             <a className="primary-link" href={whatsappLink} target="_blank">
-              Continue on WhatsApp <MessageCircle size={18} />
+              Send this summary on WhatsApp <MessageCircle size={18} />
             </a>
+
+            <p className="tiny-note">
+              This opens WhatsApp with your style summary pre-filled. You can
+              review and send it to the Sapna Munoth team.
+            </p>
 
             <button
               className="ghost-button"
@@ -274,7 +308,7 @@ export default function Home() {
                 setStatus("idle");
               }}
             >
-              Submit another demo lead
+              Submit another demo entry
             </button>
           </div>
         </section>
@@ -288,52 +322,51 @@ export default function Home() {
 
       <section className="hero">
         <div className="nav-pill">
-          <span>Sapna Munoth × Vouch Demo</span>
-          <span>Instagram DM Filter</span>
+          <span>Sapna Munoth Style Finder</span>
+          <span>Powered by Vouch</span>
         </div>
 
         <div className="hero-grid">
           <div className="hero-copy">
             <div className="brand-mark">
               <Sparkles size={18} />
-              Signature block prints • Sustainable fabrics • Buyer intent
+              A private style-assist experience for Sapna Munoth customers
             </div>
 
             <h1>
-              Turn “price please?” DMs into{" "}
-              <span>serious buyer signals.</span>
+              Find your <span>Sapna Munoth</span> look.
             </h1>
 
             <p>
-              A premium style-intent flow for Sapna Munoth that captures what a
-              buyer wants, their size, budget, timeline and readiness — before
-              the team spends time replying manually.
+              Share your size, occasion, fabric preference, budget and timeline.
+              The Sapna Munoth team will send you curated options that match
+              what you are looking for.
             </p>
 
             <div className="hero-actions">
               <a href="#style-finder" className="primary-link">
-                Try the style finder <ArrowRight size={18} />
+                Start Style Finder <ArrowRight size={18} />
               </a>
 
-              <a href="#how-it-helps" className="secondary-link">
-                See how it helps DMs
+              <a href="#sapna-view" className="secondary-link">
+                What Sapna’s team sees
               </a>
             </div>
 
             <div className="proof-row">
               <div>
-                <strong>50 DMs</strong>
-                <span>become sorted leads</span>
+                <strong>Personalized</strong>
+                <span>style suggestions</span>
               </div>
 
               <div>
-                <strong>High / Medium / Low</strong>
-                <span>buyer intent</span>
+                <strong>WhatsApp</strong>
+                <span>curated follow-up</span>
               </div>
 
               <div>
-                <strong>Google Sheet</strong>
-                <span>ready dashboard</span>
+                <strong>Simple</strong>
+                <span>preference capture</span>
               </div>
             </div>
           </div>
@@ -341,147 +374,115 @@ export default function Home() {
           <div className="hero-visual">
             <div className="fabric-card top-card">
               <Leaf size={20} />
-              <span>Sustainable fabric preference</span>
+              <span>Sustainable fabrics • Block prints</span>
             </div>
 
             <div className="phone-frame">
               <div className="phone-top">
                 <Camera size={18} />
-                <span>Instagram DM</span>
+                <span>Customer view</span>
               </div>
 
-              <div className="dm-bubble incoming">Price?</div>
-              <div className="dm-bubble incoming">Available in M?</div>
-              <div className="dm-bubble incoming">Can you send more designs?</div>
+              <div className="dm-bubble incoming">I liked your festive collection.</div>
+              <div className="dm-bubble incoming">Do you have something in size M?</div>
+              <div className="dm-bubble incoming">Need it this week.</div>
 
               <div className="dm-bubble outgoing">
-                Please share your size, occasion, budget and timeline here.
-                We’ll send curated options.
+                Share your size, occasion and budget. We’ll send you curated
+                Sapna Munoth options on WhatsApp.
               </div>
 
               <div className="mini-dashboard">
                 <div>
-                  <span>Buyer</span>
-                  <strong>Ritu</strong>
+                  <span>Preference</span>
+                  <strong>Festive wear</strong>
                 </div>
 
                 <div>
-                  <span>Intent</span>
-                  <strong>High</strong>
+                  <span>Size</span>
+                  <strong>M</strong>
                 </div>
 
                 <div>
-                  <span>Next</span>
-                  <strong>Send 3 looks</strong>
+                  <span>Timeline</span>
+                  <strong>This week</strong>
                 </div>
               </div>
             </div>
 
             <div className="fabric-card bottom-card">
               <Palette size={20} />
-              <span>Festive edit • Size M • This week</span>
+              <span>Occasion • Size • Budget • Timeline</span>
             </div>
           </div>
         </div>
       </section>
 
-      <section id="how-it-helps" className="section">
+      <section className="section">
         <div className="section-heading">
-          <p className="eyebrow">Why this fits fashion</p>
-          <h2>Fashion selling is personal. Vouch makes the first signal clear.</h2>
+          <p className="eyebrow">For customers</p>
+          <h2>A calmer way to discover the right outfit.</h2>
+          <p>
+            Instead of sending multiple messages about price, size, availability
+            and more designs, customers can share what they want in one simple
+            style finder.
+          </p>
         </div>
 
         <div className="benefit-grid">
           <FeatureCard
-            icon={<MessageCircle />}
-            title="Filters Instagram DMs"
-            text="Instead of replying manually to every price query, the team sends one smart link and receives structured buyer context."
+            icon={<Shirt />}
+            title="Tell us your style"
+            text="Share what you are looking for — festive wear, block prints, kurta sets, co-ords, gifting or custom styling."
           />
 
           <FeatureCard
             icon={<ShoppingBag />}
-            title="Finds serious buyers"
-            text="Budget, timeline, size and readiness reveal who is likely to buy now versus who is only browsing."
+            title="Share size and occasion"
+            text="The team understands your size, event, fabric preference and budget before suggesting options."
           />
 
           <FeatureCard
-            icon={<Clock />}
-            title="Improves follow-up"
-            text="Each lead gets a suggested action: send curated options now, follow up later, or add to lookbook list."
+            icon={<MessageCircle />}
+            title="Get options on WhatsApp"
+            text="Receive a more relevant edit instead of a random catalogue or repeated back-and-forth messages."
           />
 
           <FeatureCard
-            icon={<IndianRupee />}
-            title="Protects ad spend"
-            text="Meta ad clicks can be routed to this flow to see which audience actually becomes a qualified fashion lead."
+            icon={<Heart />}
+            title="Feel personally guided"
+            text="The experience feels like a private styling assistant, while staying simple and quick."
           />
-        </div>
-      </section>
-
-      <section className="section split-section">
-        <div>
-          <p className="eyebrow">Before Vouch</p>
-          <h2>Lots of interest. Very little clarity.</h2>
-
-          <ul className="pain-list">
-            <li>“Price?” messages without size, budget or occasion.</li>
-            <li>Manual replies to people who may never buy.</li>
-            <li>Exhibition visitors leave without structured follow-up data.</li>
-            <li>Meta ads create clicks, but buyer quality stays unclear.</li>
-          </ul>
-        </div>
-
-        <div className="after-card">
-          <p className="eyebrow">After Vouch</p>
-          <h3>Every inquiry becomes a clean buyer card.</h3>
-
-          <div className="lead-card">
-            <div>
-              <span>Name</span>
-              <strong>Priya</strong>
-            </div>
-
-            <div>
-              <span>Looking for</span>
-              <strong>Festive kurta set</strong>
-            </div>
-
-            <div>
-              <span>Budget</span>
-              <strong>₹5,000 - ₹8,000</strong>
-            </div>
-
-            <div>
-              <span>Timeline</span>
-              <strong>This week</strong>
-            </div>
-
-            <div>
-              <span>Intent</span>
-              <strong className="intent-high">High</strong>
-            </div>
-          </div>
         </div>
       </section>
 
       <section id="style-finder" className="form-section">
         <div className="form-intro">
-          <p className="eyebrow">Live demo form</p>
+          <p className="eyebrow">Customer experience</p>
           <h2>Find your Sapna Munoth look.</h2>
 
           <p>
-            This is the customer-facing flow Sapna can share in Instagram DMs,
-            Meta ads, WhatsApp, exhibitions, or her website.
+            Answer a few quick questions so the team can understand your style,
+            size, budget and occasion before sending options.
           </p>
+
+          <div className="side-note-card">
+            <Sparkles size={22} />
+            <h3>What happens next?</h3>
+            <p>
+              After you submit, you can send the same style summary to Sapna
+              Munoth on WhatsApp with one tap.
+            </p>
+          </div>
         </div>
 
         <form className="style-form" onSubmit={handleSubmit}>
           <div className="field-grid two">
             <Input
-              label="Name"
+              label="Your name"
               value={form.name}
               onChange={(v) => updateField("name", v)}
-              placeholder="Your name"
+              placeholder="Enter your name"
             />
 
             <Input
@@ -493,29 +494,22 @@ export default function Home() {
           </div>
 
           <Select
-            label="Where did this inquiry come from?"
+            label="Where did you discover Sapna Munoth?"
             value={form.source}
             onChange={(v) => updateField("source", v)}
-            options={[
-              "Instagram DM",
-              "Meta ad",
-              "Website",
-              "Exhibition",
-              "WhatsApp referral",
-              "Store visit",
-            ]}
+            options={options.source}
           />
 
           <div className="field-grid two">
             <Select
-              label="What are you interested in?"
+              label="What are you looking for?"
               value={form.interest}
               onChange={(v) => updateField("interest", v)}
               options={options.interest}
             />
 
             <Select
-              label="Occasion"
+              label="What is the occasion?"
               value={form.occasion}
               onChange={(v) => updateField("occasion", v)}
               options={options.occasion}
@@ -531,7 +525,7 @@ export default function Home() {
             />
 
             <Select
-              label="Size"
+              label="Preferred size"
               value={form.size}
               onChange={(v) => updateField("size", v)}
               options={options.size}
@@ -563,7 +557,7 @@ export default function Home() {
             />
 
             <Select
-              label="How should the team help?"
+              label="How should the team help you?"
               value={form.helpType}
               onChange={(v) => updateField("helpType", v)}
               options={options.helpType}
@@ -571,30 +565,13 @@ export default function Home() {
           </div>
 
           <label className="textarea-label">
-            Extra note
+            Anything specific you want us to know?
             <textarea
               value={form.notes}
               onChange={(e) => updateField("notes", e.target.value)}
               placeholder="Example: Need something elegant for a family lunch next weekend."
             />
           </label>
-
-          <div className="live-score">
-            <div>
-              <span>Live buyer intent</span>
-              <strong>{result.level}</strong>
-            </div>
-
-            <div>
-              <span>Score</span>
-              <strong>{result.score}/100</strong>
-            </div>
-
-            <div>
-              <span>Suggested action</span>
-              <strong>{result.action}</strong>
-            </div>
-          </div>
 
           <label className="consent">
             <input
@@ -614,39 +591,133 @@ export default function Home() {
             type="submit"
             disabled={status === "submitting"}
           >
-            {status === "submitting" ? "Saving..." : "Submit style preference"}
+            {status === "submitting" ? "Saving..." : "Share my style preference"}
             <Send size={18} />
           </button>
 
           {status === "error" && (
             <p className="error-text">
-              Submission failed. Check Google Script URL in Netlify environment
-              variables.
+              Submission failed. Please try again.
             </p>
           )}
         </form>
       </section>
 
-      <section className="section closing-section">
+      <section id="sapna-view" className="section split-section">
         <div>
-          <p className="eyebrow">For Sapna’s team</p>
-          <h2>One link for DMs. One sheet for serious buyers.</h2>
+          <p className="eyebrow">For Sapna and team</p>
+          <h2>Every customer submission becomes a buyer-intent row.</h2>
 
           <p>
-            This demo can be connected to Google Sheets so Sapna sees every
-            inquiry as a sorted buyer-intent row — not just another Instagram
-            message.
+            While the customer sees a beautiful style finder, Sapna’s team sees
+            structured data in Google Sheets — source, size, budget, timeline,
+            readiness, intent level and suggested follow-up action.
+          </p>
+
+          <ul className="pain-list">
+            <li>Website, Instagram, WhatsApp, Meta ads and exhibition inquiries in one format.</li>
+            <li>High / Medium / Low buyer intent for faster follow-up.</li>
+            <li>Suggested next action for each customer.</li>
+            <li>WhatsApp-ready summary for curated product suggestions.</li>
+          </ul>
+        </div>
+
+        <div className="after-card owner-card">
+          <p className="eyebrow">Sample Google Sheet view</p>
+          <h3>What Sapna’s team can act on</h3>
+
+          <div className="lead-card">
+            <div>
+              <span>Name</span>
+              <strong>Priya</strong>
+            </div>
+
+            <div>
+              <span>Source</span>
+              <strong>WhatsApp Channel</strong>
+            </div>
+
+            <div>
+              <span>Looking for</span>
+              <strong>Festive kurta set</strong>
+            </div>
+
+            <div>
+              <span>Budget</span>
+              <strong>₹5,000 - ₹8,000</strong>
+            </div>
+
+            <div>
+              <span>Timeline</span>
+              <strong>This week</strong>
+            </div>
+
+            <div>
+              <span>Intent</span>
+              <strong className="intent-high">High</strong>
+            </div>
+
+            <div>
+              <span>Action</span>
+              <strong>Send 3 curated options</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="section-heading">
+          <p className="eyebrow">How Sapna can use this</p>
+          <h2>One style finder across all touchpoints.</h2>
+        </div>
+
+        <div className="benefit-grid">
+          <FeatureCard
+            icon={<Store />}
+            title="Website"
+            text="Add a Find Your Look button for visitors who are interested but not ready to browse everything."
+          />
+
+          <FeatureCard
+            icon={<Camera />}
+            title="Instagram"
+            text="Use the link in bio, stories, DMs and replies to price or size questions."
+          />
+
+          <FeatureCard
+            icon={<MessageCircle />}
+            title="WhatsApp"
+            text="Share the style finder after posting collections, new arrivals or festive edits."
+          />
+
+          <FeatureCard
+            icon={<ClipboardList />}
+            title="Exhibitions"
+            text="Use a QR code at the stall to collect serious buyer preferences for follow-up after the event."
+          />
+        </div>
+      </section>
+
+      <section className="section closing-section">
+        <div>
+          <p className="eyebrow">Powered by Vouch</p>
+          <h2>The customer feels guided. The business gets clarity.</h2>
+
+          <p>
+            Vouch quietly turns fashion interest into structured buyer signals
+            so Sapna’s team knows who is serious, what they want, and what to do
+            next.
           </p>
         </div>
 
         <div className="closing-card">
-          <Heart size={24} />
+          <Filter size={24} />
 
           <h3>Best pilot promise</h3>
 
           <p>
-            “Out of 50 Instagram DMs, Vouch helps identify the 5–10 people who
-            are actually worth immediate follow-up.”
+            “Out of 50 fashion inquiries, identify the 5–10 buyers worth
+            immediate follow-up.”
           </p>
         </div>
       </section>
